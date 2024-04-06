@@ -17,6 +17,12 @@ def post_list_and_create(request):
             instance = form.save(commit=False)
             instance.author = author
             instance.save()
+            return JsonResponse ({
+                'title': instance.title,
+                'body': instance.body,
+                'author': instance.author.user.username,
+                'id': instance.id
+            })
     
     context = {
         'form': form,
@@ -25,28 +31,31 @@ def post_list_and_create(request):
     return render(request, 'posts/main.html', context)
 
 def load_post_data_view(request, num_posts):
-    visible = 3
-    upper = num_posts
-    lower = upper - visible
-    size = Post.objects.all().count()
-    
-    qs = Post.objects.all()
-    data = []
-    for obj in qs:
-        item = {
-            'id': obj.id,
-            'title': obj.title,
-            'body': obj.body,
-            'liked':True if request.user in obj.liked.all() else False,
-            'count': obj.like_count,
-            'author': obj.author.user.username
-        }
-        data.append(item)
-    return JsonResponse({'data':data[lower:upper], 'size':size})
+    # if request.is_ajax():
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        visible = 3
+        upper = num_posts
+        lower = upper - visible
+        size = Post.objects.all().count()
+        
+        qs = Post.objects.all()
+        data = []
+        for obj in qs:
+            item = {
+                'id': obj.id,
+                'title': obj.title,
+                'body': obj.body,
+                'liked':True if request.user in obj.liked.all() else False,
+                'count': obj.like_count,
+                'author': obj.author.user.username
+            }
+            data.append(item)
+        return JsonResponse({'data':data[lower:upper], 'size':size})
 
 def like_unlike_post(request):
     # if request.is_ajax():
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+    # if request.method == 'POST':
         pk = request.POST.get('pk')
         obj = Post.objects.get(pk=pk)
         if request.user in obj.liked.all():
