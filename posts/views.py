@@ -1,6 +1,6 @@
 from multiprocessing import context
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Post
 from .forms import PostForm
 from profiles.models import Profile
@@ -75,7 +75,6 @@ def post_detail_data_view(request, pk):
     return JsonResponse({'data': data})
 
 def like_unlike_post(request):
-    # if request.is_ajax():
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         pk = request.POST.get('pk')
         obj = Post.objects.get(pk=pk)
@@ -85,7 +84,8 @@ def like_unlike_post(request):
         else:
             liked = True
             obj.liked.add(request.user)
-        return JsonResponse({'liked': liked, 'count': obj.like_count})
+        return JsonResponse({'liked' : liked, 'count' : obj.like_count})
+    return redirect('posts:main-board')
 
 def update_post(request, pk):
     obj = Post.objects.get(pk=pk)
