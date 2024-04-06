@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
+CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 # Application definition
 
@@ -43,6 +45,7 @@ INSTALLED_APPS = [
     'profiles',
     # 3rd party apps
     'crispy_forms',
+    'crispy_bootstrap4',
 ]
 
 MIDDLEWARE = [

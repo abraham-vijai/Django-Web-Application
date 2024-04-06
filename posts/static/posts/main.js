@@ -24,7 +24,7 @@ const csrftoken = getCookie('csrftoken');
 
 const likeUnlikePosts = ()=> {
     const likeUnlikeForms = [...document.getElementsByClassName('like-unlike-forms')]
-    // console.log(likeUnlikeForms)
+    console.log(likeUnlikeForms)
     likeUnlikeForms.forEach(form=> form.addEventListener('submit',e=>{
         e.preventDefault()
         const clickedId = e.target.getAttribute('data-form-id')
