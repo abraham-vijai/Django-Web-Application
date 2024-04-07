@@ -2,16 +2,21 @@ console.log('hello world')
 
 const postsBox = document.getElementById('posts-box')
 const spinnerBox = document.getElementById('spinner-box')
-const loadBtn = document.getElementById('load-btn')
 const endBox = document.getElementById('end-box')
+const alertBox = document.getElementById('alert-box')
+
+const loadBtn = document.getElementById('load-btn')
+const addBtn = document.getElementById('add-btn')
+const closeBtns = [...document.getElementsByClassName('add-modal-close')]
+
 const postForm = document.getElementById('post-form')
 const title = document.getElementById('id_title')
 const body = document.getElementById('id_body')
 const csrf = document.getElementsByName('csrfmiddlewaretoken')
-const alertBox = document.getElementById('alert-box')
 const url = window.location.href
+const dropzone = document.getElementById('my-dropzone')
 
-console.log('csrf', csrf[0].value)
+// console.log('csrf', csrf[0].value)
 
 const getCookie = (name) => {
     let cookieValue = null;
@@ -154,9 +159,9 @@ postForm.addEventListener('submit', e=> {
                 </div>
             `)
             likeUnlikePosts()
-            $('#addPostModal').modal('hide')
+            // $('#addPostModal').modal('hide')
             handleAlerts('success', 'New post added!')
-            postForm.reset()
+            // postForm.reset()
         },
         error: function(error){
             console.log('error', error)
@@ -166,5 +171,11 @@ postForm.addEventListener('submit', e=> {
 
     })
 })
+
+addBtn.addEventListener('click', ()=> {
+    dropzone.classList.remove('not-visible')
+})
+
+
 
 getData()
