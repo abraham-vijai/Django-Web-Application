@@ -70,15 +70,17 @@ def load_post_data_view(request, num_posts):
 
 @login_required
 def post_detail_data_view(request, pk):
-    obj = Post.objects.get(pk=pk)
-    data = {
-        'id': obj.id,
-        'title': obj.title,
-        'body': obj.body,
-        'author': obj.author.user.username,
-        'logged_in': request.user.username,
-    }
-    return JsonResponse({'data': data})
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        obj = Post.objects.get(pk=pk)
+        data = {
+            'id': obj.id,
+            'title': obj.title,
+            'body': obj.body,
+            'author': obj.author.user.username,
+            'logged_in': request.user.username,
+        }
+        return JsonResponse({'data': data})
+    return redirect('posts:main-board')
 
 @login_required
 def like_unlike_post(request):
@@ -108,6 +110,8 @@ def update_post(request, pk):
             'title': new_title,
             'body': new_body,
         })
+    return redirect('posts:main-board')
+
 
 @action_permission
 def delete_post(request, pk):
@@ -116,6 +120,7 @@ def delete_post(request, pk):
         obj.delete()
         return JsonResponse({'msg': 'Some message'})
     return JsonResponse({'msg': 'access denied - AJAX only'})
+    return redirect('posts:main-board')
 
 @login_required
 def image_upload_view(request):
