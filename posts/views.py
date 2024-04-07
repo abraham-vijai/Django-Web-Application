@@ -5,8 +5,10 @@ from .models import Post, Photo
 from .forms import PostForm
 from profiles.models import Profile
 from .utils import action_permission
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
+@login_required
 def post_list_and_create(request):
     form = PostForm(request.POST or None)
     # qs = Post.objects.all()
@@ -31,6 +33,7 @@ def post_list_and_create(request):
 
     return render(request, 'posts/main.html', context)
 
+@login_required
 def post_detail(request, pk):
     obj = Post.objects.get(pk=pk)
     form = PostForm()
@@ -42,6 +45,7 @@ def post_detail(request, pk):
 
     return render(request, 'posts/detail.html', context)
 
+@login_required
 def load_post_data_view(request, num_posts):
     # if request.is_ajax():
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
@@ -64,6 +68,7 @@ def load_post_data_view(request, num_posts):
             data.append(item)
         return JsonResponse({'data':data[lower:upper], 'size':size})
 
+@login_required
 def post_detail_data_view(request, pk):
     obj = Post.objects.get(pk=pk)
     data = {
@@ -75,6 +80,7 @@ def post_detail_data_view(request, pk):
     }
     return JsonResponse({'data': data})
 
+@login_required
 def like_unlike_post(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         pk = request.POST.get('pk')
@@ -88,6 +94,8 @@ def like_unlike_post(request):
         return JsonResponse({'liked' : liked, 'count' : obj.like_count})
     return redirect('posts:main-board')
 
+@login_required
+@action_permission
 def update_post(request, pk):
     obj = Post.objects.get(pk=pk)
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
@@ -109,6 +117,7 @@ def delete_post(request, pk):
         return JsonResponse({'msg': 'Some message'})
     return JsonResponse({'msg': 'access denied - AJAX only'})
 
+@login_required
 def image_upload_view(request):
     # print(request.FILES)
     if request.method == 'POST':
